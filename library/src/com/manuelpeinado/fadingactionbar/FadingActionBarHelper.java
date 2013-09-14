@@ -76,6 +76,8 @@ public class FadingActionBarHelper {
         return this;
     }
 
+    public View getHeaderView() {return mHeaderView;}
+
     public FadingActionBarHelper contentLayout(int layoutResId) {
         mContentLayoutResId = layoutResId;
         return this;
