@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.MeasureSpec;
@@ -54,6 +55,8 @@ public class FadingActionBarHelper {
     private boolean mFirstGlobalLayoutPerformed;
     private View mMarginView;
     private View mListViewBackgroundView;
+    private int mHeaderContainerTop = 0;
+    private int mListViewBackgroundTop = 0;
 
 
     public FadingActionBarHelper actionBarBackground(int drawableResId) {
@@ -223,12 +226,12 @@ public class FadingActionBarHelper {
     private OnScrollListener mOnScrollListener = new OnScrollListener() {
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            View topChild = view.getChildAt(0);
-            if (topChild == null) {
+            if (totalItemCount == 0) {
                 onNewScroll(0);
-            } else if (topChild != mMarginView) {
+            } else if (firstVisibleItem > 0) {
                 onNewScroll(mHeaderContainer.getHeight());
             } else {
+                View topChild = view.getChildAt(0);
                 onNewScroll(-topChild.getTop());
             }
         }
@@ -261,10 +264,19 @@ public class FadingActionBarHelper {
         float damping = mUseParallax ? 0.5f : 1.0f;
         int dampedScroll = (int) (scrollPosition * damping);
         int offset = mLastDampedScroll - dampedScroll;
-        mHeaderContainer.offsetTopAndBottom(offset);
+        //if offset didn't change and header container view top is 0  but last top position != 0
+        // then we should reset offset to last top position otherwise just use offset
+        int headerTop = mHeaderContainer.getTop();
+        mHeaderContainer.offsetTopAndBottom(offset == 0 && mHeaderContainerTop != 0  && headerTop == 0 ? mHeaderContainerTop : offset);
+        mHeaderContainerTop = mHeaderContainer.getTop();
 
         if (mListViewBackgroundView != null) {
             offset = mLastScrollPosition - scrollPosition;
+            //if offset didn't change and header container view top is 0  but last top position != 0
+            // then we should reset offset to last top position otherwise just use offset
+            int listViewBkgTop = mListViewBackgroundView.getTop();
+            mListViewBackgroundView.offsetTopAndBottom(offset == 0 && mListViewBackgroundTop != 0  && listViewBkgTop == 0 ? mListViewBackgroundTop : offset);
+            mListViewBackgroundTop = mListViewBackgroundView.getTop();
             mListViewBackgroundView.offsetTopAndBottom(offset);
         }
 
