@@ -19,8 +19,7 @@
             <View
                 android:id="@+id/fab__content_top_margin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </com.cyrilmottier.android.translucentactionbar.NotifyingScrollView>
 
