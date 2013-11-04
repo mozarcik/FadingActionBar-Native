@@ -226,12 +226,12 @@ public class FadingActionBarHelper {
     private OnScrollListener mOnScrollListener = new OnScrollListener() {
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            if (totalItemCount == 0) {
+            View topChild = view.getChildAt(0);
+            if (topChild == null) {
                 onNewScroll(0);
-            } else if (firstVisibleItem > 0) {
+            } else if (topChild != mMarginView) {
                 onNewScroll(mHeaderContainer.getHeight());
             } else {
-                View topChild = view.getChildAt(0);
                 onNewScroll(-topChild.getTop());
             }
         }
